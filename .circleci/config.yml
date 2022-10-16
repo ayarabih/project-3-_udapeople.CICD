@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  slack: Cricle-CI/slack@4.9.3
+  slack: CricleCI/slack@4.9.3
   
 commands:
   notify_on_failure:
