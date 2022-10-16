@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@4.9.3
+  slack: Cricle-CI/slack@4.9.3
   
 commands:
   notify_on_failure:
@@ -308,7 +308,7 @@ jobs:
 #             fi
   notify_on_success:
     docker:
-      - cimg/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - slack/notify:
           event: pass
