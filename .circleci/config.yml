@@ -308,12 +308,12 @@ jobs:
 #             fi
   notify_on_success:
     docker:
-      - image:cimg/base:stable
+      - cimg/node:13.8.0
     steps:
       - slack/notify:
-        event: pass
-        channel: project-give-your-application-auto-deploy-superpowersdone
-        template: success_tagged_deployments_1
+          event: pass
+          channel: project-give-your-application-auto-deploy-superpowersdone
+          template: success_tagged_deployments_1
 
 workflows:
   default:
