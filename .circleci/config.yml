@@ -207,9 +207,9 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       
-      - destroy-environments:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail    
+      # - destroy-environments:
+      #     id: ${CIRCLE_WORKFLOW_ID:0:7}
+      #     when: on_fail    
 
 #   configure-infrastructure:
 #     docker:
@@ -386,17 +386,17 @@ workflows:
           filters:
             branches:
               only: [master]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
