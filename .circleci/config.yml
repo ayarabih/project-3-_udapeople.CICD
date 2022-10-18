@@ -86,7 +86,7 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-deps
       # - notify_on_failure
-
+      
   build-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -202,7 +202,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
+      - project/.circleci/ansible/inventory.txt
       
       - destroy-environment     
 
