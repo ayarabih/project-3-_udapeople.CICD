@@ -238,9 +238,9 @@ jobs:
 #             exit 1
 #      # Here's where you will add some code to rollback on failure      
 
-deploy-frontend:
+  deploy-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/base:stable
     steps:
         - checkout
         - install_awscli
@@ -261,11 +261,14 @@ deploy-frontend:
               --output text)
             echo "API_URL=http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
             cat frontend/.env
-#       - run:
-#           name: Deploy frontend objects
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure      
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm run build
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment
+      - revert-migrations
                     
 #   deploy-backend:
 #     docker:
