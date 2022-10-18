@@ -184,7 +184,7 @@ jobs:
                 --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
                 --tags project=udapeople
 #frontend deploy-infrastructure
-        - run:
+      - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
