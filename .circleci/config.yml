@@ -170,7 +170,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - install_awscli
@@ -243,9 +243,9 @@ jobs:
 #      # Here's where you will add some code to rollback on failure      
 
   deploy-frontend:
-    docker:
+      docker:
         - image: cimg/base:stable
-    steps:
+      steps:
         - checkout
         - install_awscli
         - install_nodejs
