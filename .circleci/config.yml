@@ -238,7 +238,7 @@ jobs:
 #             exit 1
 #      # Here's where you will add some code to rollback on failure      
 
-  deploy-frontend:
+deploy-frontend:
     docker:
       - image: cimg/node:13.8.0
     steps:
