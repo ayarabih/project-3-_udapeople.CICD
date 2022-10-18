@@ -240,12 +240,12 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:13.8.0
     steps:
         - checkout
         - install_awscli
         - install_nodejs
-      - restore_cache:
+    - restore_cache:
           keys: [frontend-deps]
       - run:
           name: Install dependencies
