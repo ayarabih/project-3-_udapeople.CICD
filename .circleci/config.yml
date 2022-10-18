@@ -243,12 +243,12 @@ jobs:
 #      # Here's where you will add some code to rollback on failure      
 
   deploy-frontend:
-      docker:
-        - image: cimg/base:stable
-      steps:
-        - checkout
-        - install_awscli
-        - install_nodejs
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
+      - install_nodejs
       - restore_cache:
           keys: [frontend-deps]
       - run:
