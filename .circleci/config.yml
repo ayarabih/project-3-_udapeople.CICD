@@ -64,35 +64,46 @@ commands:
           when: <<parameters.when>>
           command: |
             pip3 install <<parameters.pkglist>>
-  # destroy-environment:
-  #   description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-  #   parameters:   
-  #   steps:
-  #     - run:
-  #         name: Destroy environments
-  #         when: on_fail
-  #         command: |
-  #           # Your code here
-  #          
 
-#     revert-migrations:
-#       description: Revert the last migration if successfully run in the current workflow.
-#       parameters:
-#         # Add parameter here     
-#       steps:
-#         - run:
-#             name: Revert migrations
-#             # Add when this will run
-#             command: |
-#               # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-#               SUCCESS = 1
-#               if(( $SUCCESS==1 )); 
-#               then
-#               #  cd ~/project/backend
-#               #  npm install
-#               #  Add revert code here. You can find this in the Getting Started section.
-#                 exit 1
-#               fi
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      workflow_id:
+        default: "${CIRCLE_WORKFLOW_ID:0:7}"
+        type: string  
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            # Your code here 
+            aws s3://udapeople-<<parameters.workflow_id>> --recursive
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-<<parameters.id>>"
+            aws cloudformation delete-stack --stack-name "udapeople-backend-<<parameters.id>>"
+          # running both deletions in parallel
+            
+    revert-migrations:
+      description: Revert the last migration if successfully run in the current workflow.
+      parameters:
+        # Add parameter here    
+        workflow_id:
+          default: "${CIRCLE_WORKFLOW_ID:0:7}"
+          type: string  
+      steps:
+        - run:
+            name: Revert migrations
+            # Add when this will run
+            when: on_fail
+            command: |
+              # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+              SUCCESS = 1
+              if(( $SUCCESS==1 )); 
+              then
+              #  cd ~/project/backend
+              #  npm install
+              #  Add revert code here. You can find this in the Getting Started section.
+                exit 1
+              fi
          
 jobs:
   build-frontend:
@@ -243,41 +254,41 @@ jobs:
       #     id: ${CIRCLE_WORKFLOW_ID:0:7}
       #     when: on_fail    
 
-  # configure-infrastructure:
-  #   docker:
-  #     # Docker image here that supports Ansible
-  #   steps:
-  #     # Checkout code from git
-  #     # Add ssh keys with fingerprint
-  #     # attach workspace
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           # Your code here
-  #           exit 1
-  #     - run:
-  #         name: Configure server
-  #         command: |
-  #           # Your code here
-  #           exit 1
-  #     # Here's where you will add some code to rollback on failure      
+  configure-infrastructure:
+    docker:
+      # Docker image here that supports Ansible
+      - image: cimg/base:stable
+    steps:
+      - Checkout 
+      - Add ssh keys:
+          fingerprint:
+            -	"c1:dc:5c:1a:f6:bf:d5:b5:17:03:66:17:8a:95:79:79"
+      - attach workspace:
+          at: ~/
+      - run:
+          name: Configure server
+          command: |
+            cd .clircleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt Configure server.yml
+      - destroy-environment
 
-  # run-migrations:
-  #   docker:
-  #     # Docker image here that supports NodeJS
-  #   steps:
-  #     # Checkout code from git
-  #     - run:
-  #         name: Run migrations
-  #         command: |
-  #           # Your code here
-  #           exit 1
-  #     - run:
-  #         name: Send migration results to memstash
-  #         command: |
-  #           # Your code here
-  #           exit 1
-  #    # Here's where you will add some code to rollback on failure      
+  run-migrations:
+    docker:
+      # Docker image here that supports NodeJS
+    steps:
+      # Checkout code from git
+      - run:
+          name: Run migrations
+          command: |
+            # Your code here
+            exit 1
+      - run:
+          name: Send migration results to memstash
+          command: |
+            # Your code here
+            exit 1
+     # Here's where you will add some code to rollback on failure      
 
   # deploy-frontend:
   #   docker:
