@@ -209,7 +209,7 @@ jobs:
     steps:
       - checkout
       # - install_awscli
-#backend deploy-infrastructure
+      #backend deploy-infrastructure
       - run:
             name: install dependencies
             command: |
@@ -222,7 +222,7 @@ jobs:
                 --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
                 --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
                 --tags project=udapeople
-#frontend deploy-infrastructure
+      #frontend deploy-infrastructure
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -231,7 +231,7 @@ jobs:
                 --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
                 --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
                 --tags project=udapeople
-#ansbile deploy-infrastructure
+      #ansbile deploy-infrastructure
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -252,13 +252,13 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-# #!/bin/bash -eo pipefail
-# cd .circleci/ansible
-# cat inventory.txt
-# aws ec2 describe-instances \
-# --query 'Reservations[*].Instances[*].PublicIpAddress' \
-# --output text --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} >> inventory.txt
-# cat inventory.txt
+      # #!/bin/bash -eo pipefail
+      # cd .circleci/ansible
+      # cat inventory.txt
+      # aws ec2 describe-instances \
+      # --query 'Reservations[*].Instances[*].PublicIpAddress' \
+      # --output text --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} >> inventory.txt
+      # cat inventory.txt
       # - destroy-environments:
       #     id: ${CIRCLE_WORKFLOW_ID:0:7}
       #     when: on_fail    
@@ -268,7 +268,7 @@ jobs:
       # Docker image here that supports Ansible
       - image: cimg/base:stable
     steps:
-      # - Checkout 
+      - Checkout 
       - Add ssh keys:
           fingerprint: 
             -'75:fb:a7:8c:df:7c:e4:44:7b:9a:2a:98:69:07:18:96'
