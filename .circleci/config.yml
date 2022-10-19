@@ -262,7 +262,7 @@ jobs:
       - Checkout 
       - Add ssh keys:
           fingerprint:
-          -	"c1:dc:5c:1a:f6:bf:d5:b5:17:03:66:17:8a:95:79:79"
+            -	"c1:dc:5c:1a:f6:bf:d5:b5:17:03:66:17:8a:95:79:79"
       - attach workspace:
           at: ~/
       - run:
