@@ -235,6 +235,7 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
+            !/bin/bash -eo pipefail
             cd .circleci/ansible
             cat inventory.txt
             aws ec2 describe-instances \
@@ -252,7 +253,7 @@ jobs:
         # echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
         # cat .circleci/ansible/inventory.txt
       
-      # #!/bin/bash -eo pipefail
+      #!/bin/bash -eo pipefail
       # cd .circleci/ansible
       # cat inventory.txt
       # aws ec2 describe-instances \
