@@ -263,24 +263,24 @@ jobs:
       #     id: ${CIRCLE_WORKFLOW_ID:0:7}
       #     when: on_fail    
 
-  configure-infrastructure:
-    docker:
-      # Docker image here that supports Ansible
-      - image: cimg/base:stable
-    steps:
-      # - Checkout 
-      - Add ssh keys:
-          fingerprint: 
-            - '75:fb:a7:8c:df:7c:e4:44:7b:9a:2a:98:69:07:18:96'
-      - attach workspace:
-          at: ~/
-      - run:
-          name: Configure server
-          command: |
-            cd .clircleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt Configure server.yml
-      - destroy-environment
+  # configure-infrastructure:
+  #   docker:
+  #     # Docker image here that supports Ansible
+  #     - image: cimg/base:stable
+  #   steps:
+  #     # - Checkout 
+  #     - Add ssh keys:
+  #         fingerprint: 
+  #           - '75:fb:a7:8c:df:7c:e4:44:7b:9a:2a:98:69:07:18:96'
+  #     - attach workspace:
+  #         at: ~/
+  #     - run:
+  #         name: Configure server
+  #         command: |
+  #           cd .clircleci/ansible
+  #           cat inventory.txt
+  #           ansible-playbook -i inventory.txt Configure server.yml
+  #     - destroy-environment
 
   # run-migrations:
   #   docker:
@@ -444,10 +444,10 @@ workflows:
           filters:
             branches:
               only: [master]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
