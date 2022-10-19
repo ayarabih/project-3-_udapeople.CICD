@@ -77,7 +77,7 @@ commands:
           when: on_fail
           command: |
             # Your code here 
-            aws s3://udapeople-<<parameters.workflow_id>> --recursive
+            aws s3://udapeople-my<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack --stack-name "udapeople-frontend-<<parameters.id>>"
             aws cloudformation delete-stack --stack-name "udapeople-backend-<<parameters.id>>"
           # running both deletions in parallel
