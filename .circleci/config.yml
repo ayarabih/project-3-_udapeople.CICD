@@ -82,28 +82,27 @@ commands:
             aws cloudformation delete-stack --stack-name "udapeople-backend-<<parameters.id>>"
           # running both deletions in parallel
             
-    revert-migrations:
-      description: Revert the last migration if successfully run in the current workflow.
-      parameters:
-        # Add parameter here    
-        workflow_id:
-          default: "${CIRCLE_WORKFLOW_ID:0:7}"
-          type: string  
-      steps:
-        - run:
-            name: Revert migrations
-            # Add when this will run
-            when: on_fail
-            command: |
-              # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-              SUCCESS = 1
-              if(( $SUCCESS==1 )); 
-              then
-              #  cd ~/project/backend
-              #  npm install
-              #  Add revert code here. You can find this in the Getting Started section.
-                exit 1
-              fi
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      # Add parameter here    
+      workflow_id:
+        default: "${CIRCLE_WORKFLOW_ID:0:7}"
+        type: string  
+    steps:
+      - run:
+          name: Revert migrations
+          # Add when this will run
+          when: on_fail
+          command: |
+            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            SUCCESS = 1
+            if(( $SUCCESS==1 )); 
+            then
+            #  cd ~/project/backend
+            #  npm install
+            #  Add revert code here. You can find this in the Getting Started section.
+            fi
          
 jobs:
   build-frontend:
