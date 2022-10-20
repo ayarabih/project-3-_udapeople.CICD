@@ -246,7 +246,6 @@ jobs:
                   - project/.circleci/ansible/inventory.txt
       - destroy-environment
 
-##################################################################################################################################
 
   configure-infrastructure:
     docker:
@@ -478,7 +477,7 @@ workflows:
               only: [master]
 #########################################################################################3
       - configure-infrastructure:
-          requires: [deploy-backend-infrastructure]
+          requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
       # - deploy-frontend:
