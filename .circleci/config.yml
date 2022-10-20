@@ -477,10 +477,10 @@ workflows:
             branches:
               only: [master]
 #########################################################################################3
-      # - configure-infrastructure:
-      #     requires: [deploy-backend-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-backend-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
