@@ -38,33 +38,33 @@ commands:
             curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs
 ##################
-  setup-pip3:
-    description: Install the latest pip3 on debian-based image.
-    parameters:
-      when:
-        type: string
-        default: on_success
-    steps:
-      - run:
-          name: Install the latest pip
-          when: <<parameters.when>>
-          command: |
-            sudo apt -y update && sudo apt install -yy python3-pip
-            pip3 install --upgrade pip
-  pip3-install:
-    description: Install a package or more through pip3.
-    parameters:
-      when:
-        type: string
-        default: on_success
-      pkglist:
-        type: string
-    steps:
-      - run:
-          name: Install [ <<parameters.pkglist>> ] through pip3.
-          when: <<parameters.when>>
-          command: |
-            pip3 install <<parameters.pkglist>>
+  # setup-pip3:
+  #   description: Install the latest pip3 on debian-based image.
+  #   parameters:
+  #     when:
+  #       type: string
+  #       default: on_success
+  #   steps:
+  #     - run:
+  #         name: Install the latest pip
+  #         when: <<parameters.when>>
+  #         command: |
+  #           sudo apt -y update && sudo apt install -yy python3-pip
+  #           pip3 install --upgrade pip
+  # pip3-install:
+  #   description: Install a package or more through pip3.
+  #   parameters:
+  #     when:
+  #       type: string
+  #       default: on_success
+  #     pkglist:
+  #       type: string
+  #   steps:
+  #     - run:
+  #         name: Install [ <<parameters.pkglist>> ] through pip3.
+  #         when: <<parameters.when>>
+  #         command: |
+  #           pip3 install <<parameters.pkglist>>
 #####################
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
