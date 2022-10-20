@@ -245,13 +245,8 @@ jobs:
                 root: ~/
                 paths:
                   - project/.circleci/ansible/inventory.txt
-        # BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-        #   --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-        #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
-        #   --output text)
-        # echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
-        # cat .circleci/ansible/inventory.txt
-      ###########
+        
+      
         # !/bin/bash -eo pipefail
         # cd .circleci/ansible
         # cat inventory.txt
@@ -259,17 +254,7 @@ jobs:
         # --query 'Reservations[*].Instances[*].PublicIpAddress' \
         # --output text --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} >> inventory.txt
         # cat inventory.txt
-      #########
-      #!/bin/bash -eo pipefail
-      # cd .circleci/ansible
-      # cat inventory.txt
-      # aws ec2 describe-instances \
-      # --query 'Reservations[*].Instances[*].PublicIpAddress' \
-      # --output text --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} >> inventory.txt
-      # cat inventory.txt
-      # - destroy-environments:
-      #     id: ${CIRCLE_WORKFLOW_ID:0:7}
-      #     when: on_fail    
+      
 
   # configure-infrastructure:
   #   docker:
