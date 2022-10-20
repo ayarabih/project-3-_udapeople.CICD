@@ -100,7 +100,7 @@ commands:
               cd ~/project/backend
               npm install
               npm run migration:rever
-            fi
+            f
 jobs:
   build-frontend:
     docker:
@@ -474,7 +474,6 @@ workflows:
           filters:
             branches:
               only: [master]
-#########################################################################################3
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
