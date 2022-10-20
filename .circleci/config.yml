@@ -37,7 +37,6 @@ commands:
           command: |
             curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs
-##################
   # setup-pip3:
   #   description: Install the latest pip3 on debian-based image.
   #   parameters:
@@ -79,8 +78,7 @@ commands:
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
             aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
-          # running both deletions in parallel
-            
+          # running both deletions in parallel          
   revert-migrations:
     description: Revert the last migration 
     parameters:  
