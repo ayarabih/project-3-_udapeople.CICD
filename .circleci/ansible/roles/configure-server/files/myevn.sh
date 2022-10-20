@@ -7,4 +7,4 @@ export TYPEORM_HOST=database-1.ce3a1jcrszxw.us-east-1.rds.amazonaws.com
 export TYPEORM_PORT=5532
 export TYPEORM_USERNAME=postgres
 export TYPEORM_PASSWORD=postgres
-export TYPEORM_DATABASE=postgres
+export TYPEORM_DATABASE=postgress
