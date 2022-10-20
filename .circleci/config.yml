@@ -65,7 +65,6 @@ commands:
   #         when: <<parameters.when>>
   #         command: |
   #           pip3 install <<parameters.pkglist>>
-#####################
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
