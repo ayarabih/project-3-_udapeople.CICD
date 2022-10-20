@@ -83,9 +83,8 @@ commands:
           # running both deletions in parallel
             
   revert-migrations:
-    description: Revert the last migration if successfully run in the current workflow.
-    parameters:
-      # Add parameter here    
+    description: Revert the last migration 
+    parameters:  
       workflow_id:
         default: "${CIRCLE_WORKFLOW_ID:0:7}"
         type: string  
@@ -94,14 +93,14 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/GFm9xtXVYnmja65svvrDPQ/migration_<< parameters.Workflow_ID >>)
+            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
               cd ~/project/backend
               npm install
               npm run migration:rever
-         
+            fi
 jobs:
   build-frontend:
     docker:
