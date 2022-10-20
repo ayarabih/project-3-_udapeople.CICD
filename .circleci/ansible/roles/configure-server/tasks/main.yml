@@ -16,7 +16,7 @@
     name: pm2
     global: yes
 - name: "move env variables to /etc/profile.d/"
-  become: ture
+  become: true
   copy:
   src: myenv.sh
   dest: /etc/profile.d/
