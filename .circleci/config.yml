@@ -1,12 +1,12 @@
 version: 2.1
 
 commands:
-  notify_on_failure:
-    steps:
-      - slack/notify:
-          event: fail
-          channel: project-give-your-application-auto-deploy-superpowersdone
-          template: basic_fail_1
+  # notify_on_failure:
+  #   steps:
+  #     - slack/notify:
+  #         event: fail
+  #         channel: project-give-your-application-auto-deploy-superpowersdone
+  #         template: basic_fail_1
   install_awscli:
     description: Install AWS CLI v2
     steps:
@@ -26,7 +26,7 @@ commands:
             sudo apt update
             sudo apt install software-properties-common -y
             sudo add-apt-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansisble -y
+            sudo apt install ansible -y
   setup-pip3:
     description: Install the latest pip3 on debian-based image.
     parameters:
@@ -237,7 +237,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - install_awscli
+      # - install_awscli
       - install_ansible
       - add_ssh_keys:
           fingerprints: ["75:fb:a7:8c:df:7c:e4:44:7b:9a:2a:98:69:07:18:96"]
