@@ -23,33 +23,34 @@ commands:
             sudo apt install software-properties-common -y
             sudo add-apt-repository --yes --update ppa:ansible/ansible
             sudo apt install ansible -y
-  setup-pip3:
-    description: Install the latest pip3 on debian-based image.
-    parameters:
-      when: 
-        type: string
-        default: on_success
-    steps:
-      - run:
-          name: Install the latest pip
-          when: on_fail
-          command: |
-            sudo apt -y update && sudo apt install -yy python3-pip
-            pip3 install --upgrade pip
-  pip3-install:
-    description: Install a package or more through pip3.
-    parameters:
-      when:
-        type: string
-        default: on_success
-      pkglist:
-        type: string
-    steps:
-      - run:
-          name: Install [ <<parameters.pkglist>> ] through pip3.
-          when: on_fail
-          command: |
-            pip3 install <<parameters.pkglist>>
+
+    # setup-pip3:
+    #   description: Install the latest pip3 on debian-based image.
+    #   parameters:
+    #     when: 
+    #       type: string
+    #       default: on_success
+    #   steps:
+    #     - run:
+    #         name: Install the latest pip
+    #         when: on_fail
+    #         command: |
+    #           sudo apt -y update && sudo apt install -yy python3-pip
+    #           pip3 install --upgrade pip
+    # pip3-install:
+    #   description: Install a package or more through pip3.
+    #   parameters:
+    #     when:
+    #       type: string
+    #       default: on_success
+    #     pkglist:
+    #       type: string
+    #   steps:
+    #     - run:
+    #         name: Install [ <<parameters.pkglist>> ] through pip3.
+    #         when: on_fail
+    #         command: |
+    #           pip3 install <<parameters.pkglist>>
 
   install_nodejs:
     description: Install Node.js 13
@@ -75,25 +76,25 @@ commands:
             aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>    
 
-  revert-migrations:
-    description: Revert the last migration 
-    parameters:  
-      Workflow_ID:
-        default: "${CIRCLE_WORKFLOW_ID:0:7}"
-        type: string  
-    steps:
-      - run:
-          name: Revert migrations
-          when: on_fail
-          command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
-            # Logic for reverting the database state
-            if (( $SUCCESS == 1 ));
-            then
-              cd ~/project/backend
-              npm install
-              npm run migration:rever
-            fi
+  # revert-migrations:
+  #   description: Revert the last migration 
+  #   parameters:  
+  #     Workflow_ID:
+  #       default: "${CIRCLE_WORKFLOW_ID:0:7}"
+  #       type: string  
+  #   steps:
+  #     - run:
+  #         name: Revert migrations
+  #         when: on_fail
+  #         command: |
+  #           SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
+  #           # Logic for reverting the database state
+  #           if (( $SUCCESS == 1 ));
+  #           then
+  #             cd ~/project/backend
+  #             npm install
+  #             npm run migration:rever
+  #           fi
 jobs:
   build-frontend:
     docker:
@@ -190,7 +191,7 @@ jobs:
       # - notify_on_failure
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
