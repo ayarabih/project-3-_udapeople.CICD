@@ -167,7 +167,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      # - install_awscli
+      - install_awscli
       #backend deploy-infrastructure
       - run:
             name: install dependencies
