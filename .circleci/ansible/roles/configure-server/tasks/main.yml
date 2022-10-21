@@ -15,11 +15,12 @@
   npm:
     name: pm2
     global: yes
-- name: "move env variables to /etc/profile.d/"
-  become: true
-  copy:
-  src: myenv.sh
-  dest: /etc/profile.d/
+    
+# - name: "move env variables to /etc/profile.d/"
+#   become: true
+#   copy:
+#   src: myenv.sh
+#   dest: /etc/profile.d/
 # - name: "install python3."
 #   become: true
 #   apt:
