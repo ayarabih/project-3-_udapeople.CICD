@@ -199,6 +199,7 @@ jobs:
       - run:
             name: install dependencies
             command: |
+              #!/bin/bash -eo pipefail
               yum install -y tar gzip
       - run:        
           name: Ensure back-end infrastructure exists
