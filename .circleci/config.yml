@@ -2,14 +2,15 @@ version: 2.1
 
 commands:
   install_awscli:
-    description: Install AWS CLI v2
-    steps:
-      - run:
-          name: Install AWS CLI v2
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/Install
+      description: Install AWS CLI v2
+      steps:
+        - run:
+            name: Install AWS CLI v2
+            command: |
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip awscliv2.zip
+              sudo ./aws/install
+
   install_ansible:
     description: Install Ansible
     steps:
@@ -21,6 +22,7 @@ commands:
             sudo apt install software-properties-common -y
             sudo add-apt-repository --yes --update ppa:ansible/ansible
             sudo apt install ansible -y
+
   install_nodejs:
     description: Install Node.js 13
     steps:
@@ -29,6 +31,7 @@ commands:
           command: |
             curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -42,26 +45,27 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
             aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>          
-  revert-migrations:
-    description: Revert the last migration 
-    parameters:  
-      Workflow_ID:
-        default: "${CIRCLE_WORKFLOW_ID:0:7}"
-        type: string  
-    steps:
-      - run:
-          name: Revert migrations
-          when: on_fail
-          command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
-            # Logic for reverting the database state
-            if (( $SUCCESS == 1 ));
-            then
-              cd ~/project/backend
-              npm install
-              npm run migration:rever
-            fi
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>    
+
+  # revert-migrations:
+  #   description: Revert the last migration 
+  #   parameters:  
+  #     Workflow_ID:
+  #       default: "${CIRCLE_WORKFLOW_ID:0:7}"
+  #       type: string  
+  #   steps:
+  #     - run:
+  #         name: Revert migrations
+  #         when: on_fail
+  #         command: |
+  #           SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
+  #           # Logic for reverting the database state
+  #           if (( $SUCCESS == 1 ));
+  #           then
+  #             cd ~/project/backend
+  #             npm install
+  #             npm run migration:rever
+  #           fi
 jobs:
   build-frontend:
     docker:
