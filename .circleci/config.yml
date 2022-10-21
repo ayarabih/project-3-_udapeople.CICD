@@ -196,11 +196,11 @@ jobs:
       - checkout
       - install_awscli
       #backend deploy-infrastructure
-      - run:
-            name: install dependencies
-            command: |
-              #!/bin/bash -eo pipefail
-              yum install -y tar gzip
+      # - run:
+      #       name: install dependencies
+      #       command: |
+      #         #!/bin/bash -eo pipefail
+      #         yum install -y tar gzip
       - run:        
           name: Ensure back-end infrastructure exists
           command: |
