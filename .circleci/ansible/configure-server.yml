@@ -23,19 +23,7 @@
       changed_when: false
 
     - setup:
-  command:
-    install_ansible:
-    description: Install Ansible
-    steps:
-      - run:
-          name: Install Ansible
-          command: |
-            #!/bin/bash -eo pipefail
-            sudo apt update
-            sudo apt install software-properties-common -y
-            sudo add-apt-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansisble -y
-
+  
   roles:
     - configure-server
     - configure-prometheus-node-exporter
