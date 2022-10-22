@@ -341,7 +341,28 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
       - revert-migrations 
-      
+  smoke-test:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      # Checkout code from git
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+      - run:
+          name: Backend smoke test.
+          command: |
+            # your code here
+      - run:
+          name: Frontend smoke test.
+          command: |
+            # your code here
+            
   # smoke-test:
   #   docker:
   #     - image: cimg/base:stable
@@ -483,30 +504,7 @@ workflows:
     #         name: Install [ <<parameters.pkglist>> ] through pip3.
     #         when: <<parameters.when>>
     #         command: |
-    #           pip3 install <<parameters.pkglist>>
-
-    # run-migrations:
-    #   docker:
-    #     # Docker image here that supports NodeJS
-    #     - image: cimg/base:stable
-    #   steps:
-    #     - checkout
-    #     # - install_awscli
-    #     - run:
-    #         name: Run migrations
-    #         command: |
-    #           cd backend
-    #           npm install
-    #           npm run migrations > migrations_dump.txt
-    #     - run:
-    #         name: Send migration status to kvdb.io
-    #         command: |
-    #           if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-    #           then
-    #             curl https://kvdb.io/GFm9xtXVYnmja65svvrDPQ/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
-    #           fi
-    #     - destroy-environment
-    #     - revert-migrations     
+    #           pip3 install <<parameters.pkglist>>  
     # notify_on_failure:
     #   steps:
     #     - slack/notify:
