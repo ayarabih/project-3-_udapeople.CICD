@@ -363,10 +363,7 @@ jobs:
   #           else
   #             exit 1
   #           fi
-  #     - run:
-  #         name: Frontend smoke test.
-  #         command: |
-  #           # your code here
+
             
   smoke-test:
     docker:
@@ -399,6 +396,7 @@ jobs:
             else
               exit 1
             fi
+            
       - destroy-environment
       - revert-migrations
 
