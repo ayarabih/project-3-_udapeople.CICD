@@ -37,3 +37,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub backend-${ID}
+  # InstanceEIP:
+  #   Type: AWS::EC2::EIP
+  #   Properties:
+  #     Domain: vpc
+  #     InstanceId: !Ref EC2Instance
