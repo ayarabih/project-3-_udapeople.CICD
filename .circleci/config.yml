@@ -73,7 +73,7 @@ commands:
           when: on_fail
           command: |
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
-            aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
+            aws s3 rm s3://udapeople-my<<parameters.Workflow_ID>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>    
 
   revert-migrations:
@@ -195,12 +195,12 @@ jobs:
     steps:
       - checkout
       - install_awscli
-      #backend deploy-infrastructure
-      # - run:
-      #       name: install dependencies
-      #       command: |
-      #         #!/bin/bash -eo pipefail
-      #         yum install -y tar gzip
+        #backend deploy-infrastructure
+        # - run:
+        #       name: install dependencies
+        #       command: |
+        #         #!/bin/bash -eo pipefail
+        #         yum install -y tar gzip
       - run:        
           name: Ensure back-end infrastructure exists
           command: |
@@ -232,8 +232,7 @@ jobs:
                 root: ~/
                 paths:
                   - project/.circleci/ansible/inventory.txt
-      - destroy-environment
-
+      # - destroy-environment
   # configure-infrastructure:
   #   docker:
   #     - image: cimg/node:13.8.0
@@ -269,10 +268,11 @@ jobs:
   #         command: |
   #           if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
   #           then
-  #             curl https://kvdb.io/TS1PwLB9q8Wh2aHHLt78cq/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+  #             curl https://kvdb.io/KrxKg8155GWscq3zyRQrXo/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
   #           fi
-      # - destroy-environment
-      - revert-migrations
+  #     # - destroy-environment
+  #     - revert-migrations
+
   # deploy-frontend:
   #   docker:
   #     - image: cimg/base:stable
@@ -302,7 +302,7 @@ jobs:
   #           cd frontend
   #           npm run build
   #           aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-  #     - destroy-environment
+  #     # - destroy-environment
   #     - revert-migrations                
   # deploy-backend:
   #   docker:
@@ -340,9 +340,8 @@ jobs:
   #           cd .circleci/ansible
   #           cat inventory.txt
   #           ansible-playbook -i inventory.txt deploy-backend.yml
-  #     - destroy-environment
-  #     - revert-migrations 
-  
+  #     # - destroy-environment
+  #     - revert-migrations
   # smoke-test:
   #   docker:
   #     - image: cimg/base:stable
@@ -374,50 +373,73 @@ jobs:
   #           else
   #             exit 1
   #           fi
-  #     - destroy-environment
+  #     # - destroy-environment
   #     - revert-migrations
-
   # cloudfront-update:
-  #   docker:
-  #     # Docker image here that supports AWS CLI
-  #   steps:
-  #     # Checkout code from git
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           # your code here
-  #     - run:
-  #         name: Update cloudfront distribution
-  #         command: |
-  #           # your code here
-  #         # Here's where you will add some code to rollback on failure  
-
-  # cleanup:
   #     docker:
-  #       # Docker image here
+  #       - image: cimg/base:stable
   #     steps:
-  #       # Checkout code from git
+  #       - checkout
+  #       - install_awscli
+  #       - install_nodejs
   #       - run:
-  #           name: Get old stack workflow id
+  #           name: Save Old Workflow ID to kvdb.io
   #           command: |
-  #             # your code here
-  #             export OldWorkflowID="the id here"
-  #             export STACKS=[] #put the list of stacks here
+  #             export OLD_WORKFLOW_ID=$(aws cloudformation \
+  #                       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+  #                       --no-paginate --output text)
+  #             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+  #             curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
   #       - run:
-  #           name: Remove old stacks and files
+  #           name: Update cloudfront distribution
   #           command: |
-  #             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-  #             then
-  #               # your code here
-  #             fi
-  # notify_on_success:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - slack/notify:
-  #         event: pass
-  #         channel: project-give-your-application-auto-deploy-superpowersdone
-  #         template: success_tagged_deployments_1
+  #             aws cloudformation deploy \
+  #               --template-file .circleci/files/cloudfront.yml \
+  #               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+  #               --stack-name InitialStack
+        # - destroy-environment
+        # - revert-migrations
+      # cloudfront-update:
+      #   docker:
+      #     # Docker image here that supports AWS CLI
+      #   steps:
+      #     # Checkout code from git
+      #     - run:
+      #         name: Install dependencies
+      #         command: |
+      #           # your code here
+      #     - run:
+      #         name: Update cloudfront distribution
+      #         command: |
+      #           # your code here
+      #         # Here's where you will add some code to rollback on failure  
+
+      # cleanup:
+      #     docker:
+      #       # Docker image here
+      #     steps:
+      #       # Checkout code from git
+      #       - run:
+      #           name: Get old stack workflow id
+      #           command: |
+      #             # your code here
+      #             export OldWorkflowID="the id here"
+      #             export STACKS=[] #put the list of stacks here
+      #       - run:
+      #           name: Remove old stacks and files
+      #           command: |
+      #             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+      #             then
+      #               # your code here
+      #             fi
+      # notify_on_success:
+      #   docker:
+      #     - image: cimg/base:stable
+      #   steps:
+      #     - slack/notify:
+      #         event: pass
+      #         channel: project-give-your-application-auto-deploy-superpowersdone
+      #         template: success_tagged_deployments_1
 
 workflows:
   default:
@@ -437,18 +459,18 @@ workflows:
           filters:
             branches:
               only: [master]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
       #     requires: [run-migrations]
       # - smoke-test:
       #    requires: [deploy-backend, deploy-frontend]
-        # - cloudfront-update:
-        #     requires: [smoke-test]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
         # - cleanup:
         #     requires: [cloudfront-update]
   #note
