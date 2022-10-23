@@ -233,13 +233,13 @@ jobs:
                 paths:
                   - project/.circleci/ansible/inventory.txt
       - destroy-environment
-      
+
   configure-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:13.8.0
     steps:
       - checkout
-      # - install_awscli
+      - install_awscli
       - install_ansible
       - add_ssh_keys:
           fingerprints: ["f8:90:86:da:c9:69:28:c3:ef:61:2a:f5:d8:a5:cc:2e"]
@@ -251,7 +251,7 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment
+      # - destroy-environment
   run-migrations:
     docker:
       - image: cimg/node:13.8.0
@@ -271,7 +271,7 @@ jobs:
             then
               curl https://kvdb.io/TS1PwLB9q8Wh2aHHLt78cq/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-      - destroy-environment
+      # - destroy-environment
       - revert-migrations
   # deploy-frontend:
   #   docker:
@@ -342,28 +342,7 @@ jobs:
   #           ansible-playbook -i inventory.txt deploy-backend.yml
   #     - destroy-environment
   #     - revert-migrations 
-  # smoke-test:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     # Checkout code from git
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           # your code here
-  #     - run:
-  #         name: Get backend url
-  #         command: |
-  #           # your code here
-  #     - run:
-  #         name: Backend smoke test.
-  #         command: |
-  #           # your code here
-  #     - run:
-  #         name: Frontend smoke test.
-  #         command: |
-  #           # your code here
-            
+  
   # smoke-test:
   #   docker:
   #     - image: cimg/base:stable
