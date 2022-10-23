@@ -1,18 +1,22 @@
-- name: "configuration play." 
-  hosts: all
-  user: ubuntu
+---
+
+- name: "Add Node.js"
   become: true
-  become_method: sudo
-  become_user: root  
-  gather_facts: false
-  vars:
-    - ansible_python_interpreter: /usr/bin/python3
-    - ansible_host_key_checking: false
-    - ansible_stdout_callback: yaml
+  shell: |
+    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+- name: "Install Node.js 13"
+  become: true
+  apt:
+    name: ["nodejs"]
+    state: latest
+    update_cache: yes
+
+- name: "Install PM2 Globally"
+  npm:
+    name: pm2
+    global: yes
 
   environment:
-    - NODE_ENV: production
-    - VERSION: "1"
     - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
     - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
     - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
@@ -22,8 +26,3 @@
     - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
     - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
-    - PORT: "{{ lookup('env', 'PORT')}}"
-
-  
-  roles:
-    - deploy

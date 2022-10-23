@@ -11,7 +11,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupName: !Sub UdaPeople-${ID}
-      GroupDescription: Allow port 22 and port 3030.
+      GroupDescription: Allow port 22, port 3030 and 9100
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -22,9 +22,13 @@ Resources:
           ToPort: 3030
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
           FromPort: 9100
           ToPort: 9100
-          CidrIp: 0.0.0.0/0
+          CidrIp: 0.0.0.0/0  
 
   EC2Instance:
     Type: AWS::EC2::Instance
@@ -32,8 +36,13 @@ Resources:
       InstanceType: t2.micro
       SecurityGroups:
         - Ref: InstanceSecurityGroup
-      KeyName: udacity
-      ImageId: ami-08c40ec9ead489470
+      KeyName: udacity # If you use another key pair name, you should change this value to match.
+      # If this ami id is not available for you, you can find another (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html)
+      # Ubuntu 18 or higher works fine
+      #ami-068663a3c619dd892
+      ImageId: ami-0149b2da6ceec4bb0
       Tags:
         - Key: Name
           Value: !Sub backend-${ID}
+        - Key: Project
+          Value: Udapeople  
