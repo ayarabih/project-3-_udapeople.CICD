@@ -2,8 +2,8 @@
   hosts: all
   remote_user: ubuntu
   become: true
-  # become_method: sudo
-  # become_user: root
+  become_method: sudo
+  become_user: root
   gather_facts: false
   vars:
     - ansible_python_interpreter: /usr/bin/python3
@@ -11,16 +11,19 @@
     - ansible_stdout_callback: yaml
 
   pre_tasks:
-    - name: "wait 60 seconds for target connection to become reachable/usable."
-      wait_for_connection:
-        timeout: 60
-    #   # Your code here
+    - name: Install python for Ansible.
+      command: apt install python3
+    # pre_tasks:
+    #   - name: "wait 60 seconds for target connection to become reachable/usable."
+    #     wait_for_connection:
+    #       timeout: 60
+    #   #   # Your code here
 
-    - name: "install python for Ansible."
-      become: true
-      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
-      changed_when: false
-      # Your code here
+    #   - name: "install python for Ansible."
+    #     become: true
+    #     raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
+    #     changed_when: false
+    #     # Your code here
 
   # Get the environment variables from CircleCI and add to the EC2 instance
   environment:
@@ -37,7 +40,7 @@
 
   roles:
     - configure-server
-    - configure-prometheus-node-exporter
+    # - configure-prometheus-node-exporter
 # ---heeeeer
 # - name: "configuration play." 
 #   hosts: web

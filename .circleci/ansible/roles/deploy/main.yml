@@ -1,17 +1,37 @@
 ---
-- name: "Creates backend app directory"
-  file:
-    path: ~/backend-app
-    state: directory
-- name: "Unarchive backend files"
-  unarchive:
-    src: artifact.tar.gz
-    dest: ~/backend-app
-
-- name: "Installing Node Dependencies"
+- name: Synchronize backend files
+  synchronize:
+    src: ../../backend
+    dest: /home/ubuntu
+    recursive: true
+- name: Install npm and pm2 packages
   shell: |
-    cd ~/backend-app
-    npm i
+    sudo apt update -y
+    sudo apt install -y npm 
+    sudo npm install -y pm2 -g
+- name: Build package
+  shell: |
+    cd /home/ubuntu/backend
+    npm install
+    npm run build
+- name: Start server
+  shell: |
+    cd /home/ubuntu/backend
+    pm2 start npm -- run "start:dev"
+# ---
+# - name: "Creates backend app directory"
+#   file:
+#     path: ~/backend-app
+#     state: directory
+# - name: "Unarchive backend files"
+#   unarchive:
+#     src: artifact.tar.gz
+#     dest: ~/backend-app
+
+# - name: "Installing Node Dependencies"
+#   shell: |
+#     cd ~/backend-app
+#     npm i
 
   # - name: "Executing Node app with PM2"
   #   shell: |
@@ -19,33 +39,33 @@
   #     pm2 stop default
   #     pm2 start main.js
 
-- name: install ans start app
-  command:  pm2 start main.js
-  args:
-    chdir: ~/backend-app/dist
-  environment:
-      ENVIRONMENT: production
-      TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
-      TYPEORM_MIGRATIONS_DIR: "./migrations"
-      TYPEORM_MIGRATIONS: "./migrations/*.js"
-      TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
-      TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
-      TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
-      TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
-      TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
-      TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+# - name: install ans start app
+#   command:  pm2 start main.js
+#   args:
+#     chdir: ~/backend-app/dist
+#   environment:
+#       ENVIRONMENT: production
+#       TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
+#       TYPEORM_MIGRATIONS_DIR: "./migrations"
+#       TYPEORM_MIGRATIONS: "./migrations/*.js"
+#       TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
+#       TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
+#       TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
+#       TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
+#       TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+#       TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
 
 
-  register: execute_node
+#   register: execute_node
 
-- name: print message
-  debug:
-    msg: "{{ execute_node.stdout_lines }}"
+# - name: print message
+#   debug:
+#     msg: "{{ execute_node.stdout_lines }}"
 
-- name: "Configure pm2 to start as service"
-  shell: |
-    sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu"
-    pm2 save
+# - name: "Configure pm2 to start as service"
+#   shell: |
+#     sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu"
+#     pm2 save
 # ---heeeeeeeeeeeeer
 # - name: "Creates backend app directory"
 #   file:

@@ -7,6 +7,11 @@
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
+
+  pre_tasks:
+    - name: "install python for Ansible."
+      command: "apt install python3"  
+
   environment:
     NODE_ENV: production
     VERSION: "1"
@@ -21,7 +26,7 @@
     TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
   roles:
     - deploy
-
+    - configure-prometheus-node-exporter
 # - name: "configuration play." heeer
 #   hosts: web
 #   user: ubuntu
