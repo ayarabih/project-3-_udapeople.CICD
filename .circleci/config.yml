@@ -362,13 +362,19 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Get backend url and run backend smoke-test
-          working_directory: ./frontend
-          command: |
-            source .env
+          name:  Backend Smoke test
+          command:  |
+            BACKEND_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            export API_URL=http://${BACKEND_IP}:3030
             echo ${API_URL}
-            (curl ${API_URL}/api/status | grep -q "ok"  \
-            && exit 0) || (exit 1)
+            if curl -s --head $API_URL/api/status
+            then
+              exit 0
+            else
+              exit 1
+            fi
         # smoke-test:
         #   docker:
         #     - image: cimg/base:stable
