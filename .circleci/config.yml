@@ -1,112 +1,40 @@
 version: 2.1
-
 commands:
-  install_awscli:
-      description: Install AWS CLI v2
-      steps:
-        - run:
-            name: Install AWS CLI v2
-            command: |
-              #!/bin/bash -eo pipefail
-              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-              unzip awscliv2.zip
-              sudo ./aws/install
-
-  install_ansible:
-    description: Install Ansible
-    steps:
-      - run:
-          name: Install Ansible
-          command: |
-            #!/bin/bash -eo pipefail
-            sudo apt update
-            sudo apt install software-properties-common -y
-            sudo add-apt-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansible -y
-
-    # setup-pip3:
-    #   description: Install the latest pip3 on debian-based image.
-    #   parameters:
-    #     when: 
-    #       type: string
-    #       default: on_success
-    #   steps:
-    #     - run:
-    #         name: Install the latest pip
-    #         when: on_fail
-    #         command: |
-    #           sudo apt -y update && sudo apt install -yy python3-pip
-    #           pip3 install --upgrade pip
-    # pip3-install:
-    #   description: Install a package or more through pip3.
-    #   parameters:
-    #     when:
-    #       type: string
-    #       default: on_success
-    #     pkglist:
-    #       type: string
-    #   steps:
-    #     - run:
-    #         name: Install [ <<parameters.pkglist>> ] through pip3.
-    #         when: on_fail
-    #         command: |
-    #           pip3 install <<parameters.pkglist>>
-  install_nodejs:
-    description: Install Node.js 13.8.0
-    steps:
-      - run:
-          name: Install Node.js 13.8.0
-          command: |
-            # Install Node.js LTS version as our base Node.js version
-            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-            sudo apt install -y nodejs
-
-            # Use n version manager to use Node.js v13.8.0
-            sudo npm install --global n
-            sudo n 13.8.0
-  # install_nodejs:
-  #   description: Install Node.js 13
-  #   steps:
-  #     - run:
-  #         name: Install Node.js 13
-  #         command: |
-  #           curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-  #           sudo apt install -y nodejs
-
-  destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+  destroy_environment:
+    description: Destroy backend and frontend cloudformation stacks given a workflow ID.
     parameters:
-      Workflow_ID:
+      workflow_id:
         type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
-            aws s3 rm s3://udapeople-my<<parameters.Workflow_ID>> --recursive
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>    
+            echo "Destroying environment: << parameters.workflow_id >> "
+            aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-<< parameters.workflow_id >>"
+            aws cloudformation delete-stack --stack-name "udapeople-backend-<< parameters.workflow_id >>"
 
   revert-migrations:
-    description: Revert the last migration 
-    parameters:  
-      Workflow_ID:
-        default: "${CIRCLE_WORKFLOW_ID:0:7}"
-        type: string  
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      workflow_id:
+        type: string
     steps:
       - run:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/X9PkjmEoe4NQhHH6B7M8b3/migration_<< parameters.Workflow_ID >>)
+            SUCCESS=$(curl --insecure  https://kvdb.io/UNXuAxBwtV127XBx6L2P3A/migration_<< parameters.workflow_id >>)
+
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
-              cd ~/project/backend
-              npm install
-              npm run migration:rever
+                cd ~/project/backend
+                npm install
+                npm run migration:revert
             fi
+
 jobs:
   build-frontend:
     docker:
@@ -249,7 +177,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["75:fb:a7:8c:df:7c:e4:44:7b:9a:2a:98:69:07:18:96"]
+          fingerprints: ["7a:1d:f3:37:5e:93:61:68:12:a7:41:73:c7:a2:5c:42"]
       - attach_workspace:
           at: .
       - run:
@@ -290,7 +218,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl --insecure https://kvdb.io/X9PkjmEoe4NQhHH6B7M8b3/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'              
+              curl --insecure https://kvdb.io/UNXuAxBwtV127XBx6L2P3A/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'              
             fi
       - destroy_environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -357,7 +285,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["75:fb:a7:8c:df:7c:e4:44:7b:9a:2a:98:69:07:18:96"]
+          fingerprints: ["7a:1d:f3:37:5e:93:61:68:12:a7:41:73:c7:a2:5c:42"]
       - attach_workspace:
           at: .
       - run:
@@ -428,6 +356,141 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+workflows:
+  default:
+    jobs:
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+         requires: [deploy-backend, deploy-frontend]
+    # commands:
+    #   install_awscli:
+    #       description: Install AWS CLI v2
+    #       steps:
+    #         - run:
+    #             name: Install AWS CLI v2
+    #             command: |
+    #               #!/bin/bash -eo pipefail
+    #               curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    #               unzip awscliv2.zip
+    #               sudo ./aws/install
+
+    #   install_ansible:
+    #     description: Install Ansible
+    #     steps:
+    #       - run:
+    #           name: Install Ansible
+    #           command: |
+    #             #!/bin/bash -eo pipefail
+    #             sudo apt update
+    #             sudo apt install software-properties-common -y
+    #             sudo add-apt-repository --yes --update ppa:ansible/ansible
+    #             sudo apt install ansible -y
+
+    # setup-pip3:
+    #   description: Install the latest pip3 on debian-based image.
+    #   parameters:
+    #     when: 
+    #       type: string
+    #       default: on_success
+    #   steps:
+    #     - run:
+    #         name: Install the latest pip
+    #         when: on_fail
+    #         command: |
+    #           sudo apt -y update && sudo apt install -yy python3-pip
+    #           pip3 install --upgrade pip
+    # pip3-install:
+    #   description: Install a package or more through pip3.
+    #   parameters:
+    #     when:
+    #       type: string
+    #       default: on_success
+    #     pkglist:
+    #       type: string
+    #   steps:
+    #     - run:
+    #         name: Install [ <<parameters.pkglist>> ] through pip3.
+    #         when: on_fail
+    #         command: |
+    #           pip3 install <<parameters.pkglist>>
+    # install_nodejs:
+    #   description: Install Node.js 13.8.0
+    #   steps:
+    #     - run:
+    #         name: Install Node.js 13.8.0
+    #         command: |
+    #           # Install Node.js LTS version as our base Node.js version
+    #           curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    #           sudo apt install -y nodejs
+
+    #           # Use n version manager to use Node.js v13.8.0
+    #           sudo npm install --global n
+    #           sudo n 13.8.0
+    # install_nodejs:
+    #   description: Install Node.js 13
+    #   steps:
+    #     - run:
+    #         name: Install Node.js 13
+    #         command: |
+    #           curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+    #           sudo apt install -y nodejs
+
+    # destroy-environment:
+    #   description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    #   parameters:
+    #     Workflow_ID:
+    #       type: string
+    #       default: ${CIRCLE_WORKFLOW_ID:0:7}
+    #   steps:
+    #     - run:
+    #         name: Destroy environments
+    #         when: on_fail
+    #         command: |
+    #           aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
+    #           aws s3 rm s3://udapeople-my<<parameters.Workflow_ID>> --recursive
+    #           aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>    
+    # revert-migrations:
+    #   description: Revert the last migration 
+    #   parameters:  
+    #     Workflow_ID:
+    #       default: "${CIRCLE_WORKFLOW_ID:0:7}"
+    #       type: string  
+    #   steps:
+    #     - run:
+    #         name: Revert migrations
+    #         when: on_fail
+    #         command: |
+    #           SUCCESS=$(curl --insecure  https://kvdb.io/X9PkjmEoe4NQhHH6B7M8b3/migration_<< parameters.Workflow_ID >>)
+    #           # Logic for reverting the database state
+    #           if (( $SUCCESS == 1 ));
+    #           then
+    #             cd ~/project/backend
+    #             npm install
+    #             npm run migration:rever
+    #           fi
+
       # jobs:
       #   build-frontend:
       #     docker:
@@ -796,34 +859,34 @@ jobs:
       #         channel: project-give-your-application-auto-deploy-superpowersdone
       #         template: success_tagged_deployments_1
 
-workflows:
-  default:
-    jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [master]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
-      - smoke-test:
-         requires: [deploy-backend, deploy-frontend]
+  # workflows:
+  #   default:
+  #     jobs:
+  #       - build-frontend
+  #       - build-backend
+  #       - test-frontend:
+  #           requires: [build-frontend]
+  #       - test-backend:
+  #           requires: [build-backend]
+  #       - scan-backend:
+  #           requires: [build-backend]
+  #       - scan-frontend:
+  #           requires: [build-frontend]
+  #       - deploy-infrastructure:
+  #           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+  #           filters:
+  #             branches:
+  #               only: [master]
+  #       - configure-infrastructure:
+  #           requires: [deploy-infrastructure]
+  #       - run-migrations:
+  #           requires: [configure-infrastructure]
+  #       - deploy-frontend:
+  #           requires: [run-migrations]
+  #       - deploy-backend:
+  #           requires: [run-migrations]
+  #       - smoke-test:
+  #          requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
         # - cleanup:
