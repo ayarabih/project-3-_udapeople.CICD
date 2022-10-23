@@ -137,39 +137,48 @@ jobs:
             npm audit --audit-level=critical
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       - checkout
-      - run: yum install -y tar gzip
-      - run:
+      - install_awscli
+        #backend deploy-infrastructure
+        # - run:
+        #       name: install dependencies
+        #       command: |
+        #         #!/bin/bash -eo pipefail
+        #         yum install -y tar gzip
+      - run:        
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
-            --template-file .circleci/files/backend.yml \
-            --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-            --tags project=udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+                --template-file .circleci/files/backend.yml \
+                --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+                --tags project=udapeople
+      #frontend deploy-infrastructure
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
-              --tags project=front-end-${CIRCLE_WORKFLOW_ID:0:7} \
-               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
-               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+                --template-file .circleci/files/frontend.yml \
+                --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+                --tags project=udapeople
+      #ansbile deploy-infrastructure
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --output text >> .circleci/ansible/inventory.txt
+              BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+                --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text)
+              echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
+              cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
-          root: .
-          paths:
-            - .circleci/ansible/inventory.txt
-      - destroy_environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+                root: ~/
+                paths:
+                  - project/.circleci/ansible/inventory.txt
+      # - destroy-environment
 
   # configure-infrastructure:
   #   docker:
