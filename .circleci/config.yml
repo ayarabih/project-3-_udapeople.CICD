@@ -266,7 +266,7 @@ jobs:
       - run:
           name: Send migration status to kvdb
           command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            if grep -q "hsas been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl https://kvdb.io/GmZhZmygt1nJaw2QxXG4w1/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
@@ -340,7 +340,7 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      # - destroy-environment
+      - destroy-environment
       - revert-migrations
   smoke-test:
     docker:

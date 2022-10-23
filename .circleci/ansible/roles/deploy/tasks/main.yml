@@ -1,14 +1,16 @@
-  # ---
-  # - name: Synchronize backend files
-  #   synchronize:
-  #   src: ../../backend
-  #   dest: /home/ubuntu
-  #   recursive: true
-  # - name: Install npm and pm2 packages
-  #   shell: |
-  #     sudo apt update -y
-  #     sudo apt install -y npm 
-  #     sudo npm install -y pm2 -g
+---
+- name: Synchronize backend files
+  synchronize:
+  src: ../../backend
+  dest: /home/ubuntu
+  recursive: true
+  
+- name: Install npm and pm2 packages
+  shell: |
+    sudo apt update -y
+    sudo apt install -y npm 
+    sudo npm install -y pm2 -g
+
 - name: Build package
   shell: |
     cd /home/ubuntu/backend
