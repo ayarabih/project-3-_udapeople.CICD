@@ -3,7 +3,6 @@
   file:
     path: ~/backend-app
     state: directory
-
 - name: "Unarchive backend files"
   unarchive:
     src: artifact.tar.gz
@@ -13,11 +12,30 @@
   shell: |
     cd ~/backend-app
     npm i
-- name: "Executing Node app with PM2"
-  shell: |
-    cd ~/backend-app/dist
-    pm2 stop default
-    pm2 start main.js
+
+  # - name: "Executing Node app with PM2"
+  #   shell: |
+  #     cd ~/backend-app/dist
+  #     pm2 stop default
+  #     pm2 start main.js
+
+- name: install ans start app
+  command:  pm2 start main.js
+  args:
+    chdir: ~/backend-app/dist
+  environment:
+      ENVIRONMENT: production
+      TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
+      TYPEORM_MIGRATIONS_DIR: "./migrations"
+      TYPEORM_MIGRATIONS: "./migrations/*.js"
+      TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
+      TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
+      TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
+      TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
+      TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+      TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+
+
   register: execute_node
 
 - name: print message
@@ -25,22 +43,52 @@
     msg: "{{ execute_node.stdout_lines }}"
 
 - name: "Configure pm2 to start as service"
-  become: true
   shell: |
-    env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
-- name: "create project dir"
-  shell: mkdir ~/backend
+    sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu"
+    pm2 save
+# ---heeeeeeeeeeeeer
+# - name: "Creates backend app directory"
+#   file:
+#     path: ~/backend-app
+#     state: directory
 
-- name: "send build atrifacts to remote"
-  unarchive:
-    src: ../../artifact.tar.gz
-    dest: ~/backend
+# - name: "Unarchive backend files"
+#   unarchive:
+#     src: artifact.tar.gz
+#     dest: ~/backend-app
 
-- name: "install backend artifacts"
-  npm:
-    path: ~/backend
-    production: true
-    global: true
+# - name: "Installing Node Dependencies"
+#   shell: |
+#     cd ~/backend-app
+#     npm i
+# - name: "Executing Node app with PM2"
+#   shell: |
+#     cd ~/backend-app/dist
+#     pm2 stop default
+#     pm2 start main.js
+#   register: execute_node
 
-- name: "start the app"
-  shell: cd ~/backend && pm2 stop all; pm2 start npm -- run start
+# - name: print message
+#   debug:
+#     msg: "{{ execute_node.stdout_lines }}"
+
+# - name: "Configure pm2 to start as service"
+#   become: true
+#   shell: |
+#     env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
+# - name: "create project dir"
+#   shell: mkdir ~/backend
+
+# - name: "send build atrifacts to remote"
+#   unarchive:
+#     src: ../../artifact.tar.gz
+#     dest: ~/backend
+
+# - name: "install backend artifacts"
+#   npm:
+#     path: ~/backend
+#     production: true
+#     global: true
+
+# - name: "start the app"
+#   shell: cd ~/backend && pm2 stop all; pm2 start npm -- run start
