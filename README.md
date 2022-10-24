@@ -2,8 +2,6 @@
 ![Annotation 2022-10-24 225716](https://user-images.githubusercontent.com/109382355/197627972-11a5afbd-ea1d-4b82-b6fa-d371086f3a17.png)
 
 
-![udapeople-pipeline](https://user-images.githubusercontent.com/109382355/197565573-41a88010-cef5-4997-ba65-3eff9072c7c0.png)
-
  ## Prerequisites
 [![Nodejs 13](https://img.shields.io/badge/Node.js-white?style=plastic&logo=Node.js)](https://nodejs.org/en/) 
 [![doker](https://img.shields.io/badge/Docker-white?style=plastic&logo=Docker)](https://www.docker.com/) 
