@@ -102,7 +102,7 @@ jobs: #now we will bbuild our jobs
           paths: [backend/node_modules]
           key: backend-deps
 
-  test-frontend: # create test-frontend
+  test-frontend: # create tests-frontend
     docker:
       - image: cimg/node:13.8.0
     steps:
