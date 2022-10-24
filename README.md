@@ -1,4 +1,4 @@
-                                 ##Udacity Advanced Cloud DevOps Build CI/CD Pipelines, Monitoring & Loggin Give Your Application Auto-Deploy Superpowers 
+ ##Udacity Advanced Cloud DevOps Build CI/CD Pipelines, Monitoring & Loggin Give Your Application Auto-Deploy Superpowers 
 ![Annotation 2022-10-24 225716](https://user-images.githubusercontent.com/109382355/197627972-11a5afbd-ea1d-4b82-b6fa-d371086f3a17.png)
 
 
