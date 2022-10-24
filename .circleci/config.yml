@@ -171,7 +171,7 @@ jobs: #now we will bbuild our jobs
           event: fail
           template: basic_fail_1
 
-  deploy-infrastructure: # create deploy-infrastructure
+  deploy-infrastructure: # create deploy-infrastructuree
     docker:
       - image: amazon/aws-cli
     steps:
