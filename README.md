@@ -1,4 +1,12 @@
- ##Udacity Advanced Cloud DevOps Build CI/CD Pipelines, Monitoring & Loggin Give Your Application Auto-Deploy Superpowers 
+
+<h3 align="center">Build CI/CD Pipelines, Monitoring & Logging<br>Give Your Application Auto-Deploy Superpowers<br>UdaPeople<i>(Cloud-Based Software)</i></h3>
+
+<h2 align="center">Project Submission</h2>  
+
+<p align="center">
+  <img width="" height="" src="./digram.png"  
+</p>
+
 ![Annotation 2022-10-24 225716](https://user-images.githubusercontent.com/109382355/197627972-11a5afbd-ea1d-4b82-b6fa-d371086f3a17.png)
 
 
@@ -31,6 +39,13 @@
 - [CloudFormation](https://aws.amazon.com/cloudformation/) - Infrastrcuture as code
 - [Ansible](https://www.ansible.com/) - Configuration management tool
 - [Prometheus](https://prometheus.io/) - Monitoring tool
+
+<h3 align="center">Section 1: Selling CI/CD to your Team/Organization</h3>  
+
+
+|CRITERIA|MEETS SPECIFICATIONS |Files |
+|:-----|:-----|:-----|
+|Explain the fundamentals and benefits of CI/CD to achieve, build, and deploy automation for cloud-based software products.|The CI/CD benefits proposal contains essential benefits of CI/CD, and describes the business context that will benefit from the automation tools. Explanation should include benefits that translate to revenue and cost for the business.|[presentation.pdf](./Presentation.pdf)| 
 
 
 
