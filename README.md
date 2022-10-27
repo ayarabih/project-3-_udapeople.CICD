@@ -42,10 +42,10 @@
 
 ##in this project you will see
 
-1- all steps for this project in PDF file
-2- screan for steps 
-3-file url.txt for all url 
-4- daygram 
+ 1- all steps for this project in PDF file
+ 2- screan for steps 
+ 3-file url.txt for all url 
+ 4- daygram 
 
 
 
