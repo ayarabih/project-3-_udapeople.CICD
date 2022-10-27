@@ -40,10 +40,10 @@
 
 <h3 align="center">Section 1: Selling CI/CD to your Team/Organization</h3>  
 
-
-|CRITERIA|MEETS SPECIFICATIONS |Files |
-|:-----|:-----|:-----|
-|Explain the fundamentals and benefits of CI/CD to achieve, build, and deploy automation for cloud-based software products.|The CI/CD benefits proposal contains essential benefits of CI/CD, and describes the business context that will benefit from the automation tools. Explanation should include benefits that translate to revenue and cost for the business.|[presentation.pdf](./Presentation.pdf)| 
+##in this project you will see
+1- all steps for this project in PDF file
+2- screan for steps 
+3-file url.txt for all url 
 
 
 
