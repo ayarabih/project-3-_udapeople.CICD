@@ -1,0 +1,20 @@
+ Public Url to GitHub repository (not private)  https://github.com/ayarabih/udapeople.CICD
+****************************
+Public URL for your S3 Bucket
+(https://s3.console.aws.amazon.com/s3/buckets/udapeople-4f30af2?region=us-east-1&tab=objects)
+**********************
+front-end url 
+(http://udapeople-56a6d43.s3-website-us-east-1.amazonaws.com)
+***********************
+cloudfront url 
+(d3azzqvb0i48d1.cloudfront.net)
+***********************
+endpoint for database 
+(database-1.c9qlajyw5c4b.us-east-1.rds.amazonaws.com)
+****************************
+url ssh -i udacity.pem ubuntu@ec2-3-80-54-124.compute-1.amazonaws.com
+ ((ec2-3-80-54-124.compute-1.amazonaws.com ))
+********************************
+http://192.168.1.2:9090/targets?search=
+ec2-54-88-42-171.compute-1.amazonaws.com:9090/targets
+*****************************
