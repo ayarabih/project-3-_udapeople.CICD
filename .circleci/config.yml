@@ -349,7 +349,7 @@ jobs: #now we will bbuild our jobs
             
       - destroy-environment   
       - revert-migrations 
-  smoke-test: # create smoke-test
+  smoke-test: # createe smoke-test
     docker:
       - image: amazon/aws-cli
     steps:
