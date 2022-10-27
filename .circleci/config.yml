@@ -6,11 +6,11 @@
 #and also have presentation for CI/CD
 
 version: 2.1
-orbs:   #steps for connect slack email and massage 
-  slack: circleci/slack@4.10.1
+
 commands:
 
-  install_ansible: #we will install ansible 
+  #create installing ansible 
+  install_ansible: 
     description: Install Ansible
     steps:
       - run:
@@ -18,7 +18,8 @@ commands:
           command: |
             python3 -m pip install --user ansible        
 
-  install_nodejs:  #we will install nodejs 13.8.0
+  #create installing nodejs 13.8.0
+  install_nodejs:  
     description: Install Node.js 13.8.0
     steps:
       - run:
@@ -32,7 +33,8 @@ commands:
             sudo npm install --global n
             sudo n 13.8.0
             
-  revert-migrations: #this steps  for create migrations 
+  # create reverting migrations
+  revert-migrations:  
     description: Revert the last migration
     parameters:
       Workflow_ID:
@@ -43,8 +45,8 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=$(curl --insecure  https://kvdb.io/Up68KQvVZCMC32AM4i2mJR/migration_<< parameters.Workflow_ID >>)
-            # Logic for reverting the database state
+            SUCCESS=$(curl --insecure  https://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
+            # Logic ffor reverting the database state
             if (( $SUCCESS == 1 ));
             then
               cd ~/projects/backend
@@ -52,7 +54,8 @@ commands:
               npm run migration:revert
             fi
 
-  destroy-environment: #step for create destroy-environment
+  #creating destroy environment
+  destroy-environment: 
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       Workflow_ID:
@@ -67,8 +70,9 @@ commands:
             aws s3 rm "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
-jobs: #now we will bbuild our jobs
-  build-frontend: # create build-frontend
+jobs: 
+  #create building the frontend
+  build-frontend:
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -85,7 +89,8 @@ jobs: #now we will bbuild our jobs
           paths: [frontend/node_modules]
           key: frontend-deps
 
-  build-backend: # create build-backend
+   # create building the backend
+  build-backend:
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -102,7 +107,8 @@ jobs: #now we will bbuild our jobs
           paths: [backend/node_modules]
           key: backend-deps
 
-  test-frontend: # create tests-frontend
+  #create  testing the frontend
+  test-frontend: 
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -116,7 +122,8 @@ jobs: #now we will bbuild our jobs
             npm install
             npm run test
                 
-  test-backend: # create test-backend
+  # create testing the backend
+  test-backend: 
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -130,7 +137,8 @@ jobs: #now we will bbuild our jobs
             npm install
             npm run test
 
-  scan-frontend:  # create scan-frontend
+  # create scaning the frontend
+  scan-frontend:  
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -145,12 +153,9 @@ jobs: #now we will bbuild our jobs
             npm install oauth-sign@^0.9.0
             npm audit fix --audit-level=critical
             #npm audit --audit-level=critical
-      - slack/notify:
-          channel: project-give-your-application-auto-deploy-superpowersdone
-          event: fail
-          template: basic_fail_1
 
-  scan-backend: # create scan-backend
+  # create scaning backend
+  scan-backend: 
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -166,12 +171,8 @@ jobs: #now we will bbuild our jobs
             npm audit fix --force --audit-level=critical
             npm audit fix --force --audit-level=critical
             #npm audit --audit-level=critical
-      - slack/notify:
-          channel: project-give-your-application-auto-deploy-superpowersdone
-          event: fail
-          template: basic_fail_1
-
-  deploy-infrastructure: # create deploy-infrastructure
+  # create deploying the infrastructure
+  deploy-infrastructure: 
     docker:
       - image: amazon/aws-cli
     steps:
@@ -210,8 +211,9 @@ jobs: #now we will bbuild our jobs
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment
-
-  configure-infrastructure:  # create configure-infrastructure
+          
+  # create configuring the infrastructure
+  configure-infrastructure: 
     docker:
       - image: python:3.7-alpine3.11
     steps:
@@ -220,7 +222,7 @@ jobs: #now we will bbuild our jobs
       - attach_workspace:
           at: ~/
       - add_ssh_keys:
-          fingerprints: ["f8:90:86:da:c9:69:28:c3:ef:61:2a:f5:d8:a5:cc:2e"]
+          fingerprints: ["73:29:d9:3a:66:02:e2:9a:90:24:7d:18:07:45:45:f0"]
       - run:
           name: Install dependencies
           command: |
@@ -231,7 +233,8 @@ jobs: #now we will bbuild our jobs
             ansible-playbook .circleci/ansible/configure-server.yml -i .circleci/ansible/inventory.txt
       - destroy-environment
 
-  run-migrations: # create run-migrations
+  # create running migrations
+  run-migrations: 
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -259,13 +262,14 @@ jobs: #now we will bbuild our jobs
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              # If you are using kvdb.io, generate the bucket ID "Up68KQvVZCMC32AM4i2mJR" in your local terminal first
-              curl -d '1' https://kvdb.io/Up68KQvVZCMC32AM4i2mJR/migration_${CIRCLE_WORKFLOW_ID:0:7}  
+              # If you ar using kvdb.io, generate the bucket ID "6nF57BbaBTrcAdmiBpVuVM" in your local terminal first
+              curl -d '1' https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  
             fi
       - revert-migrations
       - destroy-environment
 
-  deploy-frontend: # create deploy-frontend
+  # create deploying the frontend
+  deploy-frontend: 
     docker:
       - image: cimg/node:13.8.0
     steps:
@@ -298,7 +302,8 @@ jobs: #now we will bbuild our jobs
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
 
-  deploy-backend: # create deploy-backend
+  # create deploying the backend
+  deploy-backend: 
     docker:
       - image: cimg/python:3.10
     steps:
@@ -315,7 +320,7 @@ jobs: #now we will bbuild our jobs
       - install_ansible
       - install_nodejs
       - add_ssh_keys:
-          fingerprints: ["f8:90:86:da:c9:69:28:c3:ef:61:2a:f5:d8:a5:cc:2e"]
+          fingerprints: ["73:29:d9:3a:66:02:e2:9a:90:24:7d:18:07:45:45:f0"]
       - attach_workspace:
           at: ~/
       - restore_cache:
@@ -349,7 +354,9 @@ jobs: #now we will bbuild our jobs
             
       - destroy-environment   
       - revert-migrations 
-  smoke-test: # createe smoke-test
+  
+  # creating smoke test
+  smoke-test: 
     docker:
       - image: amazon/aws-cli
     steps:
@@ -365,7 +372,7 @@ jobs: #now we will bbuild our jobs
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
-            if curl "${API_URL}/api/status" | grep "ok"
+            if curl -s "${API_URL}/api/status" | grep "ok"
             then
                 exit 0
             else
@@ -384,30 +391,41 @@ jobs: #now we will bbuild our jobs
             fi 
       - destroy-environment 
       - revert-migrations
-  cloudfront-update: # create cloudfront-update
+  
+  # create updating cloudfront
+  cloudfront-update: 
     docker:
-      - image: amazon/aws-cli
+      - image: cimg/base:stable #amazon/aws-cli
     steps:
       - checkout
+      - run: 
+          name: Install aws_cli
+          command: |
+            #test
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install    
+      - install_nodejs
       - run:
           name: Save old Workflow ID to kvdb.io
           command: |
-            yum install -y curl
+            # yum install -y curl
             export OLD_WORKFLOW_ID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            curl https://kvdb.io/Up68KQvVZCMC32AM4i2mJR/old_workflow_id-2 -d "${CIRCLE_WORKFLOW_ID:0:7}"
+            curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id-2 -d "${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Update cloudfront distribution
           command: |
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
             --stack-name InitialStack \
-            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            --tags project=udapeople
+            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
-      - revert-migrations  
+      - revert-migrations   
       
-  cleanup: # createe cleanup
+  # create cleaning up
+  cleanup:
     docker:
       - image: amazon/aws-cli
     steps:
@@ -415,26 +433,27 @@ jobs: #now we will bbuild our jobs
       - run:
           name: Remove old stacks and files
           command: |
+          
             yum install -y curl         
-            export OLDWORKFLOWID=$(curl --insecure https://kvdb.io/Up68KQvVZCMC32AM4i2mJR/old_workflow_id-2)
-            echo Old Workflow ID: $OLDWORKFLOWID 
+            export OLDWORKFLOWID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id-2)
+            echo Old Workflow ID: udapeople-$OLDWORKFLOWID 
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-            # Fetch the stack names 
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+            # Fetch the stack names          
+            export STACKS=($(aws cloudformation list-stacks \
+            --query "StackSummaries[*].StackName" \
             --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}"          
-            if [[ udapeople-${WorkflowID} =~ ${OLDWORKFLOWID} ]]
+            echo Stack names: "${STACKS[@]}"           
+            if [[ "${STACKS[@]}" =~ ${OLDWORKFLOWID} ]]
             then
               aws s3 rm "s3://udapeople-${OLDWORKFLOWID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLDWORKFLOWID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLDWORKFLOWID}"
               echo cleaning confirmed
-            else
-              echo cant clean
+            # else
+            #   echo cant clean
             fi
-
-workflows:  # create workflows
-  my-workflow:
+workflows:  
+  project3-workflow:
     jobs:
       - build-frontend
       - build-backend
