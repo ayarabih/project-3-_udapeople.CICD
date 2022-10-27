@@ -41,9 +41,11 @@
 <h3 align="center">Section 1: Selling CI/CD to your Team/Organization</h3>  
 
 ##in this project you will see
+
 1- all steps for this project in PDF file
 2- screan for steps 
 3-file url.txt for all url 
+4- daygram 
 
 
 
